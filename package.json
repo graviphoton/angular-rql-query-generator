@@ -11,12 +11,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/graviphoton/bower-angular-rql-query-generator.git"
+    "url": "https://github.com/graviphoton/angular-rql-query-generator.git"
   },
   "author": "Ramon Boss <ramon.boss@swisscom.com>",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/graviphoton/bower-angular-rql-query-generator/issues"
+    "url": "https://github.com/graviphoton/angular-rql-query-generator/issues"
   },
-  "homepage": "https://github.com/graviphoton/bower-angular-rql-query-generator#readme"
+  "homepage": "https://github.com/graviphoton/angular-rql-query-generator#readme",
+  "devDependencies": {
+    "gulp": "~3.9.0",
+    "gulp-karma": "~0.0.4",
+    "gulp-load-plugins": "~0.7.1",
+    "jasmine-core": "~2.3.4",
+    "karma": "~0.12.35",
+    "karma-jasmine": "~0.3.1",
+    "karma-phantomjs-launcher": "~0.1.4",
+    "require-dir": "~0.1.0",
+    "wiredep": "~2.2.0"
+  }
 }
