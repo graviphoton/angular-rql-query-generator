@@ -1,0 +1,22 @@
+{
+  "name": "angular-rql-query-generator",
+  "version": "1.0.0",
+  "homepage": "https://github.com/graviphoton/bower-angular-rql-query-generator",
+  "authors": [
+    "Ramon Boss <ramon.boss@swisscom.com>"
+  ],
+  "description": "Generate a RQL query",
+  "main": "angular-rql-query-generator.js",
+  "license": "GPL-3.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}

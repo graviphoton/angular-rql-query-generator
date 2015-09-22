@@ -1,0 +1,1 @@
+# packaged angular-rql-query-generator
