@@ -1,3 +1,6 @@
+/**
+ * License: GPL-3.0
+ */
 angular.module('angular-rql-query-generator', [])
   .factory('rqlQueryGenerator', function ($log) {
 
@@ -15,7 +18,7 @@ angular.module('angular-rql-query-generator', [])
      *
      * @returns {string}
      */
-    Query.prototype.getQueryString = function () {
+    Query.prototype.toString = function () {
       return this.queryString.substr(0, this.queryString.length - 1);
     };
 
