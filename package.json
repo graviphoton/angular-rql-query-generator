@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "node_modules/.bin/gulp test"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/graviphoton/angular-rql-query-generator#readme",
   "devDependencies": {
+    "bower": "~1.5.2",
     "gulp": "~3.9.0",
     "gulp-jscs": "~1.6.0",
     "gulp-jshint": "~1.9.0",
