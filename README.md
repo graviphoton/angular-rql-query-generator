@@ -1,5 +1,7 @@
 # packaged angular-rql-query-generator
 
+[![Build Status](https://api.travis-ci.org/graviphoton/angular-rql-query-generator.png?branch=develop)](https://travis-ci.org/graviphoton/angular-rql-query-generator)
+
 ## Install
 
 You can install this package with `bower`.
