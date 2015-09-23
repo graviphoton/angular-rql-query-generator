@@ -95,4 +95,19 @@ describe('rqlQueryGenerator', function() {
       .toEqual('sort(-id,+val%2Due)&select(na%25me,%26te%2Cst)&like(name,*1*)&limit(5)&and(or(eq(i%26d,4),eq(ke%2Cy,5)),and(eq(id2,2),eq(key2,3)),or(eq(id2,2),eq(key2,3)))');
   });
 
+  it('should properly handle two queries', function() {
+    var q1 = rqlQueryGenerator.createQuery();
+    var q2 = rqlQueryGenerator.createQuery();
+    q1.sort('-id', '+val-ue').select('na%me', '&te,st').like('name', 1, true).limit(5).andStart().orStart().eq('i&d', 4);
+    q2.sort('-id', '+value2').select('name2', 'test').like('name', 1, true).limit(5).andStart().orStart().eq('id2', 4).eq('key', 5).orEnd().andStart().eq('id', 2);
+    q1.eq('ke,y', 5).orEnd().andStart().eq('id2', 2).eq('key2', 3).andEnd().orStart().eq('id2', 2).eq('key2', 3).orEnd();
+    q2.eq('key', 3).andEnd().orStart().eq('id', 2).eq('key', 3).orEnd().andEnd();
+    q1.andEnd();
+
+    expect(q1.toString())
+      .toEqual('sort(-id,+val%2Due)&select(na%25me,%26te%2Cst)&like(name,*1*)&limit(5)&and(or(eq(i%26d,4),eq(ke%2Cy,5)),and(eq(id2,2),eq(key2,3)),or(eq(id2,2),eq(key2,3)))');
+    expect(q2.toString())
+      .toEqual('sort(-id,+value2)&select(name2,test)&like(name,*1*)&limit(5)&and(or(eq(id2,4),eq(key,5)),and(eq(id,2),eq(key,3)),or(eq(id,2),eq(key,3)))');
+  });
+
 });
