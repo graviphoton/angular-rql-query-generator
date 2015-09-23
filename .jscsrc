@@ -6,5 +6,5 @@
   "requireCapitalizedComments": null,
   "requireCamelCaseOrUpperCaseIdentifiers": null,
   "disallowKeywordsOnNewLine": null,
-  "requireCurlyBraces": [ "if", "else", "for", "while", "do", "try", "catch", "function" ]
+  "requireCurlyBraces": [ "if", "else", "for", "while", "do", "try", "catch" ]
 }

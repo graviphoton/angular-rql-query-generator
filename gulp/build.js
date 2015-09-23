@@ -9,11 +9,10 @@ var $ = require('gulp-load-plugins')({
 });
 
 gulp.task('lint', function() {
-  var lintTaks = gulp.src('src/{app,components}/**/*.js')
+  var lintTaks = gulp.src('{gulp,src,test}/*.js')
     .pipe($.jshint())
     .pipe($.jscs())
-    .pipe($.jshint.reporter('jshint-stylish'))
-    .pipe($.jshint.reporter('gulp-checkstyle-jenkins-reporter'));
+    .pipe($.jshint.reporter('jshint-stylish'));
 
   // only fail on this if not in serve-mode
   if (this.seq.slice(-1)[0] !== 'serve') {
