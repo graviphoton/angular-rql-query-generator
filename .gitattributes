@@ -1,0 +1,11 @@
+# Auto detect text files and perform LF normalization
+*        text=auto
+
+*.json    text eol=lf
+*.js     text eol=lf
+
+# absolute paths are ok, as are globs
+#/**/postinst* text eol=lf
+
+# paths that don't start with / are treated relative to the .gitattributes folder
+#relative/path/*.txt text eol=lf

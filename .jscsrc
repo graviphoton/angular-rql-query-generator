@@ -1,0 +1,10 @@
+{
+  "preset": "node-style-guide",
+  "maximumLineLength": null,
+  "requireTrailingComma": null,
+  "disallowQuotedKeysInObjects": null,
+  "requireCapitalizedComments": null,
+  "requireCamelCaseOrUpperCaseIdentifiers": null,
+  "disallowKeywordsOnNewLine": null,
+  "requireCurlyBraces": [ "if", "else", "for", "while", "do", "try", "catch", "function" ]
+}
