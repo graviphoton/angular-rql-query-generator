@@ -29,15 +29,16 @@ angular.module('angular-rql-query-generator', [])
      * @returns {Query}
      */
     Query.prototype.sort = function () {
+      var query = getNewQuery(this.queryString);
       var sortQuery = 'sort(';
       for (var i = 0; i < arguments.length; i++) {
         var sortChar = arguments[i].substr(0, 1);
         var property = arguments[i].substr(1, arguments[i].length);
         sortQuery += sortChar + encodeProperty(property) + ',';
       }
-      this.queryString += sortQuery.substr(0, sortQuery.length - 1) + ')&';
+      query.queryString += sortQuery.substr(0, sortQuery.length - 1) + ')&';
 
-      return this;
+      return query;
     };
 
     /**
@@ -47,13 +48,14 @@ angular.module('angular-rql-query-generator', [])
      * @returns {Query}
      */
     Query.prototype.select = function () {
+      var query = getNewQuery(this.queryString);
       var selectQuery = 'select(';
       for (var i = 0; i < arguments.length; i++) {
         selectQuery += encodeProperty(arguments[i]) + ',';
       }
-      this.queryString += selectQuery.substr(0, selectQuery.length - 1) + ')&';
+      query.queryString += selectQuery.substr(0, selectQuery.length - 1) + ')&';
 
-      return this;
+      return query;
     };
 
     /**
@@ -65,10 +67,11 @@ angular.module('angular-rql-query-generator', [])
      * @returns {Query}
      */
     Query.prototype.like = function (property, value, wildcards) {
+      var query = getNewQuery(this.queryString);
       var wildcard = wildcards ? '*' : '';
-      this.queryString += 'like(' + encodeProperty(property) + ',' + wildcard + encodeString(value) + wildcard + ')&';
+      query.queryString += 'like(' + encodeProperty(property) + ',' + wildcard + encodeString(value) + wildcard + ')&';
 
-      return this;
+      return query;
     };
 
     /**
@@ -85,10 +88,11 @@ angular.module('angular-rql-query-generator', [])
         return this;
       }
 
+      var query = getNewQuery(this.queryString);
       var startString = start ? ',' + start : '';
-      this.queryString += 'limit(' + count + startString + ')&';
+      query.queryString += 'limit(' + count + startString + ')&';
 
-      return this;
+      return query;
     };
 
     function updateQueryMethods() {
@@ -106,8 +110,9 @@ angular.module('angular-rql-query-generator', [])
          * @returns {Query}
          */
         Query.prototype[operator] = function (property, value) {
-          this.queryString += operator + '(' + encodeProperty(property) + ',' + encodeString(value) + ')&';
-          return this;
+          var query = getNewQuery(this.queryString);
+          query.queryString += operator + '(' + encodeProperty(property) + ',' + encodeString(value) + ')&';
+          return query;
         };
       });
 
@@ -124,8 +129,9 @@ angular.module('angular-rql-query-generator', [])
          * @returns {Query}
          */
         Query.prototype[operator] = function (property, values) {
-          this.queryString += operator + '(' + encodeProperty(property) + ',(' + encodeString(values) + '))&';
-          return this;
+          var query = getNewQuery(this.queryString);
+          query.queryString += operator + '(' + encodeProperty(property) + ',(' + encodeString(values) + '))&';
+          return query;
         };
       });
 
@@ -141,9 +147,10 @@ angular.module('angular-rql-query-generator', [])
          * @returns {Query}
          */
         Query.prototype[operator + 'Start'] = function () {
-          queryLengths.push(this.queryString.length);
-          this.queryString += operator + '(';
-          return this;
+          var query = getNewQuery(this.queryString);
+          queryLengths.push(query.queryString.length);
+          query.queryString += operator + '(';
+          return query;
         };
 
         /**
@@ -152,9 +159,10 @@ angular.module('angular-rql-query-generator', [])
          * @returns {Query}
          */
         Query.prototype[operator + 'End'] = function () {
+          var query = getNewQuery(this.queryString);
           var currentQueryLength = queryLengths[queryLengths.length - 1];
           // Changes since {operator}Start
-          var changes = this.queryString.substr(currentQueryLength, this.queryString.length - currentQueryLength - 1);
+          var changes = query.queryString.substr(currentQueryLength, query.queryString.length - currentQueryLength - 1);
           // If {operator} params are empty no changes
           if (changes === operator) {
             changes = '';
@@ -162,9 +170,9 @@ angular.module('angular-rql-query-generator', [])
             changes = changes.replace(/&/g, ',') + ')&';
           }
 
-          this.queryString = this.queryString.substr(0, currentQueryLength) + changes;
+          query.queryString = query.queryString.substr(0, currentQueryLength) + changes;
           queryLengths.splice(-1, 1);
-          return this;
+          return query;
         };
       });
     }
@@ -186,6 +194,12 @@ angular.module('angular-rql-query-generator', [])
       return encodeURIComponent(property).replace(/[\-_\+~!\\'\*\(\)]/g, function (char) {
         return '%' + char.charCodeAt(0).toString(16).toUpperCase();
       });
+    }
+
+    function getNewQuery(queryString) {
+      query = new Query();
+      query.queryString = queryString;
+      return query;
     }
 
     return {
