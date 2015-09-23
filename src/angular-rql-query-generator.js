@@ -1,10 +1,8 @@
-'use strict';
-
 /**
  * License: GPL-3.0
  */
 angular.module('angular-rql-query-generator', [])
-  .factory('rqlQueryGenerator', function($log) {
+  .factory('rqlQueryGenerator', function ($log) {
 
     var SCALAR_OPERATORS = ['eq', 'ne', 'lt', 'gt', 'le', 'ge'];
     var ARRAY_OPERATORS = ['in', 'out'];
@@ -20,7 +18,7 @@ angular.module('angular-rql-query-generator', [])
      *
      * @returns {string}
      */
-    Query.prototype.toString = function() {
+    Query.prototype.toString = function () {
       return this.queryString.substr(0, this.queryString.length - 1);
     };
 
@@ -30,16 +28,17 @@ angular.module('angular-rql-query-generator', [])
      * @param {...string} property 1 to n properties
      * @returns {Query}
      */
-    Query.prototype.sort = function() {
+    Query.prototype.sort = function () {
+      var query = getNewQuery(this.queryString);
       var sortQuery = 'sort(';
       for (var i = 0; i < arguments.length; i++) {
         var sortChar = arguments[i].substr(0, 1);
         var property = arguments[i].substr(1, arguments[i].length);
         sortQuery += sortChar + encodeProperty(property) + ',';
       }
-      this.queryString += sortQuery.substr(0, sortQuery.length - 1) + ')&';
+      query.queryString += sortQuery.substr(0, sortQuery.length - 1) + ')&';
 
-      return this;
+      return query;
     };
 
     /**
@@ -48,14 +47,15 @@ angular.module('angular-rql-query-generator', [])
      * @param {...string} property 1 to n properties
      * @returns {Query}
      */
-    Query.prototype.select = function() {
+    Query.prototype.select = function () {
+      var query = getNewQuery(this.queryString);
       var selectQuery = 'select(';
       for (var i = 0; i < arguments.length; i++) {
         selectQuery += encodeProperty(arguments[i]) + ',';
       }
-      this.queryString += selectQuery.substr(0, selectQuery.length - 1) + ')&';
+      query.queryString += selectQuery.substr(0, selectQuery.length - 1) + ')&';
 
-      return this;
+      return query;
     };
 
     /**
@@ -66,11 +66,12 @@ angular.module('angular-rql-query-generator', [])
      * @param {boolean} wildcards Wildcards before and after search
      * @returns {Query}
      */
-    Query.prototype.like = function(property, value, wildcards) {
+    Query.prototype.like = function (property, value, wildcards) {
+      var query = getNewQuery(this.queryString);
       var wildcard = wildcards ? '*' : '';
-      this.queryString += 'like(' + encodeProperty(property) + ',' + wildcard + encodeString(value) + wildcard + ')&';
+      query.queryString += 'like(' + encodeProperty(property) + ',' + wildcard + encodeString(value) + wildcard + ')&';
 
-      return this;
+      return query;
     };
 
     /**
@@ -81,21 +82,22 @@ angular.module('angular-rql-query-generator', [])
      * @param {number} maxCount TODO What's this?
      * @returns {Query}
      */
-    Query.prototype.limit = function(count, start) {
+    Query.prototype.limit = function (count, start) {
       if (isNaN(count) || (start && isNaN(start))) {
         $log.warn('Warning: limit(' + count + ',' + start + ') is not allowed - skipping!');
         return this;
       }
 
+      var query = getNewQuery(this.queryString);
       var startString = start ? ',' + start : '';
-      this.queryString += 'limit(' + count + startString + ')&';
+      query.queryString += 'limit(' + count + startString + ')&';
 
-      return this;
+      return query;
     };
 
     function updateQueryMethods() {
 
-      SCALAR_OPERATORS.forEach(function(operator) {
+      SCALAR_OPERATORS.forEach(function (operator) {
         if (typeof Query.prototype[operator] === 'function') {
           return;
         }
@@ -107,13 +109,14 @@ angular.module('angular-rql-query-generator', [])
          * @param {any}    value
          * @returns {Query}
          */
-        Query.prototype[operator] = function(property, value) {
-          this.queryString += operator + '(' + encodeProperty(property) + ',' + encodeString(value) + ')&';
-          return this;
+        Query.prototype[operator] = function (property, value) {
+          var query = getNewQuery(this.queryString);
+          query.queryString += operator + '(' + encodeProperty(property) + ',' + encodeString(value) + ')&';
+          return query;
         };
       });
 
-      ARRAY_OPERATORS.forEach(function(operator) {
+      ARRAY_OPERATORS.forEach(function (operator) {
         if (typeof Query.prototype[operator] === 'function') {
           return;
         }
@@ -125,13 +128,14 @@ angular.module('angular-rql-query-generator', [])
          * @param {array}  values
          * @returns {Query}
          */
-        Query.prototype[operator] = function(property, values) {
-          this.queryString += operator + '(' + encodeProperty(property) + ',(' + encodeString(values) + '))&';
-          return this;
+        Query.prototype[operator] = function (property, values) {
+          var query = getNewQuery(this.queryString);
+          query.queryString += operator + '(' + encodeProperty(property) + ',(' + encodeString(values) + '))&';
+          return query;
         };
       });
 
-      LOGIC_OPERATORS.forEach(function(operator) {
+      LOGIC_OPERATORS.forEach(function (operator) {
         if (typeof Query.prototype[operator] === 'function') {
           return;
         }
@@ -142,10 +146,11 @@ angular.module('angular-rql-query-generator', [])
          *
          * @returns {Query}
          */
-        Query.prototype[operator + 'Start'] = function() {
-          queryLengths.push(this.queryString.length);
-          this.queryString += operator + '(';
-          return this;
+        Query.prototype[operator + 'Start'] = function () {
+          var query = getNewQuery(this.queryString);
+          queryLengths.push(query.queryString.length);
+          query.queryString += operator + '(';
+          return query;
         };
 
         /**
@@ -153,10 +158,11 @@ angular.module('angular-rql-query-generator', [])
          *
          * @returns {Query}
          */
-        Query.prototype[operator + 'End'] = function() {
+        Query.prototype[operator + 'End'] = function () {
+          var query = getNewQuery(this.queryString);
           var currentQueryLength = queryLengths[queryLengths.length - 1];
           // Changes since {operator}Start
-          var changes = this.queryString.substr(currentQueryLength, this.queryString.length - currentQueryLength - 1);
+          var changes = query.queryString.substr(currentQueryLength, query.queryString.length - currentQueryLength - 1);
           // If {operator} params are empty no changes
           if (changes === operator) {
             changes = '';
@@ -164,9 +170,9 @@ angular.module('angular-rql-query-generator', [])
             changes = changes.replace(/&/g, ',') + ')&';
           }
 
-          this.queryString = this.queryString.substr(0, currentQueryLength) + changes;
+          query.queryString = query.queryString.substr(0, currentQueryLength) + changes;
           queryLengths.splice(-1, 1);
-          return this;
+          return query;
         };
       });
     }
@@ -178,20 +184,26 @@ angular.module('angular-rql-query-generator', [])
       if (typeof value !== 'string') {
         return value;
       }
-      return encodeURIComponent(value).replace(/[\-_\+\.~!\\'\*\(\)]/g, function(char) {
+      return encodeURIComponent(value).replace(/[\-_\+\.~!\\'\*\(\)]/g, function (char) {
         return '%' + char.charCodeAt(0).toString(16).toUpperCase();
       });
     }
 
     // no . encoding for nested properties
     function encodeProperty(property) {
-      return encodeURIComponent(property).replace(/[\-_\+~!\\'\*\(\)]/g, function(char) {
+      return encodeURIComponent(property).replace(/[\-_\+~!\\'\*\(\)]/g, function (char) {
         return '%' + char.charCodeAt(0).toString(16).toUpperCase();
       });
     }
 
+    function getNewQuery(queryString) {
+      query = new Query();
+      query.queryString = queryString;
+      return query;
+    }
+
     return {
-      createQuery: function() {
+      createQuery: function () {
         return new Query();
       }
     };
