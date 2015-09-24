@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "postinstall": "node_modules/.bin/bower install",
+    "postinstall": "node_modules/.bin/bower install && node_modules/.bin/gulp lint",
     "test": "node_modules/.bin/gulp test"
   },
   "repository": {
@@ -23,10 +23,12 @@
   "devDependencies": {
     "bower": "~1.5.2",
     "gulp": "~3.9.0",
+    "gulp-git": "~1.4.0",
     "gulp-jscs": "~1.6.0",
     "gulp-jshint": "~1.9.0",
     "gulp-karma": "~0.0.4",
     "gulp-load-plugins": "~0.7.1",
+    "gulp-prompt": "~0.1.2",
     "gulp-rename": "~1.2.0",
     "gulp-uglify": "~1.0.1",
     "jasmine-core": "~2.3.4",
