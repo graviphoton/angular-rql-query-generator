@@ -11,15 +11,15 @@ var version;
 var priority;
 
 gulp.task('git-flow', ['createReleaseBranch', 'bump'], function () {
-
+  return gulp.src(['package.json', 'bower.json'])
+    .pipe($.git.add())
+    .pipe($.git.commit('v' + version));
 });
 
 gulp.task('bump', ['setVersion'], function () {
   return gulp.src(['package.json', 'bower.json'])
     .pipe($.bump({type: priority}))
-    .pipe(gulp.dest('./'))
-    .pipe($.git.add())
-    .pipe($.git.commit('v' + version));
+    .pipe(gulp.dest('./'));
 });
 
 gulp.task('createReleaseBranch', ['setVersion'], function () {
