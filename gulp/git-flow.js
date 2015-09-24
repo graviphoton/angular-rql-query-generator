@@ -1,38 +1,44 @@
 'use strict';
 
-var fs = require('fs');
 var gulp = require('gulp');
+var fs = require('fs');
+var semver = require('semver');
 var $ = require('gulp-load-plugins')({
   pattern: ['gulp-*']
 });
 
-function bump(src, releaseType) {
-  return src
-    .pipe($.bump({type: releaseType}))
-    .pipe(gulp.dest('./'));
-}
+var version;
+var priority;
 
-gulp.task('git-flow', ['bump', 'createReleaseBranch'], function() {
-  console.log('test');
+gulp.task('git-flow', ['createReleaseBranch', 'bump'], function () {
+
 });
 
-gulp.task('bump', function () {
-  var src = gulp.src(['package.json', 'bower.json'])
+gulp.task('bump', ['setVersion'], function () {
+  return gulp.src(['package.json', 'bower.json'])
+    .pipe($.bump({type: priority}))
+    .pipe(gulp.dest('./'))
+    .pipe($.git.add())
+    .pipe($.git.commit('v' + version));
+});
+
+gulp.task('createReleaseBranch', ['setVersion'], function () {
+  $.git.checkout('release/' + version, {args:'-b'});
+});
+
+gulp.task('setVersion', ['promptPriority'], function() {
+  var currentVersion = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
+  version = semver.inc(currentVersion, priority);
+});
+
+gulp.task('promptPriority', function() {
+  return gulp.src('*')
     .pipe($.prompt.prompt({
       type: 'list',
-      name: 'bump',
+      name: 'priority',
       message: 'What type of bump would you like to do?',
       choices: ['patch', 'minor', 'major']
     }, function (res) {
-      src
-        .pipe($.bump({type: res.bump}))
-        .pipe(gulp.dest('./'));
+      priority = res.priority;
     }));
-  return src;
-});
-
-gulp.task('createReleaseBranch', ['bump'], function() {
-  var json = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-  var version = json.version;
-  $.git.checkout('release/' + version, {args:'-b'});
 });

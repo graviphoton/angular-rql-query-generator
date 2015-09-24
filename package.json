@@ -24,7 +24,6 @@
     "bower": "~1.5.2",
     "gulp": "~3.9.0",
     "gulp-bump": "~1.0.0",
-    "gulp-filter": "~3.0.1",
     "gulp-git": "~1.4.0",
     "gulp-jscs": "~1.6.0",
     "gulp-jshint": "~1.9.0",
@@ -39,6 +38,7 @@
     "karma-jasmine": "~0.3.1",
     "karma-phantomjs-launcher": "~0.1.4",
     "require-dir": "~0.1.0",
+    "semver": "~5.0.3",
     "uglify-save-license": "~0.4.1",
     "wiredep": "~2.2.0"
   }
