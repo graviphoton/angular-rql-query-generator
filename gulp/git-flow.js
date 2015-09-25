@@ -8,15 +8,30 @@ var $ = require('gulp-load-plugins')({
 
 var version;
 var priority;
+var releaseBranch;
 
-gulp.task('git-flow', ['createReleaseBranch', 'commitBump'], function() {
+gulp.task('git-flow', ['mergeIntoDevelop'], function() {
 
+});
+
+gulp.task('mergeIntoDevelop', ['tagBranch'], function() {
+  $.git.checkout('develop');
+  $.git.merge('master');
+});
+
+gulp.task('tagBranch', ['mergeIntoMaster'], function() {
+  $.git.tag(version, 'Merge branch ' + releaseBranch);
+});
+
+gulp.task('mergeIntoMaster', ['commitBump'], function() {
+  $.git.checkout('master');
+  $.git.merge(releaseBranch);
 });
 
 gulp.task('commitBump', ['bump', 'createReleaseBranch'], function() {
   return gulp.src(['package.json', 'bower.json'])
     .pipe($.git.add())
-    .pipe($.git.commit(version));
+    .pipe($.git.commit('Version bump'));
 });
 
 gulp.task('bump', ['setVersion'], function() {
@@ -26,7 +41,8 @@ gulp.task('bump', ['setVersion'], function() {
 });
 
 gulp.task('createReleaseBranch', ['setVersion'], function() {
-  $.git.checkout('release/' + version, {args: '-b'});
+  releaseBranch = 'release/' + version;
+  $.git.checkout(releaseBranch, {args: '-b'});
 });
 
 gulp.task('setVersion', ['promptPriority'], function() {
