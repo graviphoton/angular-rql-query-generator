@@ -2,18 +2,21 @@
 
 var gulp = require('gulp');
 var fs = require('fs');
-var semver = require('semver');
 var $ = require('gulp-load-plugins')({
-  pattern: ['gulp-*']
+  pattern: ['gulp-*', 'semver']
 });
 
 var version;
 var priority;
 
-gulp.task('git-flow', ['createReleaseBranch', 'bump'], function() {
+gulp.task('git-flow', ['createReleaseBranch', 'commitBump'], function() {
+
+});
+
+gulp.task('commitBump', ['bump', 'createReleaseBranch'], function() {
   return gulp.src(['package.json', 'bower.json'])
     .pipe($.git.add())
-    .pipe($.git.commit('v' + version));
+    .pipe($.git.commit(version));
 });
 
 gulp.task('bump', ['setVersion'], function() {
@@ -28,10 +31,11 @@ gulp.task('createReleaseBranch', ['setVersion'], function() {
 
 gulp.task('setVersion', ['promptPriority'], function() {
   var currentVersion = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
-  version = semver.inc(currentVersion, priority);
+  version = 'v' + $.semver.inc(currentVersion, priority);
 });
 
-gulp.task('promptPriority', function() {
+gulp.task('promptPriority', ['checkoutDevelop'], function() {
+  console.warn('This command will tag your repo. Please abort if you don\'t understand this.');
   return gulp.src('*')
     .pipe($.prompt.prompt({
       type: 'list',
@@ -41,4 +45,8 @@ gulp.task('promptPriority', function() {
     }, function(res) {
       priority = res.priority;
     }));
+});
+
+gulp.task('checkoutDevelop', function() {
+  // $.git.checkout('develop');
 });
