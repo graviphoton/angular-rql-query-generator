@@ -1,13 +1,14 @@
 {
   "name": "angular-rql-query-generator",
-  "version": "0.2.1",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "postinstall": "node_modules/.bin/bower install && node_modules/.bin/gulp lint",
+    "postinstall": "node_modules/.bin/bower install",
+    "pretest": "node_modules/.bin/gulp lint",
     "test": "node_modules/.bin/gulp test"
   },
   "repository": {
