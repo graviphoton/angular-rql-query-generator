@@ -94,6 +94,37 @@ describe('RqlQuery', function() {
       .toEqual('sort(-id,+val%2Due)&select(na%25me,%26te%2Cst)&like(name,*1*)&limit(5)&and(or(eq(i%26d,4),eq(ke%2Cy,5)),and(eq(id2,2),eq(key2,3)),or(eq(id2,2),eq(key2,3)))');
   });
 
+  it('should properly create elemMatch query', function() {
+    var q = new RqlQuery();
+    expect(q.elemMatchStart('links').eq('type', 'owner').elemMatchEnd().toString())
+      .toEqual('elemMatch(links,eq(type,owner))');
+  });
+
+  it('should properly create elemMatch query with logical operators inside', function() {
+    var q = new RqlQuery();
+    expect(
+      q.elemMatchStart('links').andStart().eq('type', 'owner').eq('$ref', 'http://api-server.com/client-id/100500').andEnd().elemMatchEnd().toString()
+    )
+      .toEqual('elemMatch(links,and(eq(type,owner),eq(%24ref,http%3A%2F%2Fapi%2Dserver%2Ecom%2Fclient%2Did%2F100500)))');
+  });
+
+  it('should properly create several elemMatch operators', function() {
+    var q = new RqlQuery();
+    expect(
+      q.andStart()
+        .elemMatchStart('links').andStart().eq('type', 'owner').eq('$ref', 'http://api-server.com/client-id/100500').andEnd().elemMatchEnd()
+        .elemMatchStart('links').andStart().eq('type', 'docType-1').eq('$ref', 'http://api-server.com/types/doc1').andEnd().elemMatchEnd()
+        .andEnd()
+        .toString()
+    )
+      .toEqual(
+        'and(' +
+        'elemMatch(links,and(eq(type,owner),eq(%24ref,http%3A%2F%2Fapi%2Dserver%2Ecom%2Fclient%2Did%2F100500))),' +
+        'elemMatch(links,and(eq(type,docType%2D1),eq(%24ref,http%3A%2F%2Fapi%2Dserver%2Ecom%2Ftypes%2Fdoc1)))' +
+        ')'
+      );
+  });
+
   it('should properly handle two queries', function() {
     var q1 = new RqlQuery();
     var q2 = new RqlQuery();
