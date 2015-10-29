@@ -97,6 +97,29 @@ angular.module('angular-rql-query-generator', [])
       return query;
     };
 
+    /**
+     * Adds elemMatch to the query string
+     *
+     * @param {string} property  Property to search in
+     * @returns {Query}
+     */
+    Query.prototype.elemMatchStart = function(property) {
+      var query = getNewQuery(this.queryString);
+      query.queryString += 'elemMatch(' + property + ',';
+      return query;
+    };
+
+    /**
+     * Ends elemMatch operator
+     *
+     * @returns {Query}
+     */
+    Query.prototype.elemMatchEnd = function() {
+      var query = getNewQuery(this.queryString);
+      query.queryString = query + ')&';
+      return query;
+    };
+
     function updateQueryMethods() {
 
       SCALAR_OPERATORS.forEach(function(operator) {
