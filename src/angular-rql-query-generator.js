@@ -4,7 +4,7 @@
  * License: GPL-3.0
  */
 angular.module('angular-rql-query-generator', [])
-  .factory('RqlQuery', function($log) {
+  .factory('RqlQuery', ['$log', function($log) {
 
     var SCALAR_OPERATORS = ['eq', 'ne', 'lt', 'gt', 'le', 'ge'];
     var ARRAY_OPERATORS = ['in', 'out'];
@@ -228,4 +228,4 @@ angular.module('angular-rql-query-generator', [])
     }
 
     return Query;
-  });
+  }]);
