@@ -155,7 +155,7 @@ angular.module('angular-rql-query-generator', [])
          */
         Query.prototype[operator] = function(property, values) {
           var query = getNewQuery(this.queryString);
-          query.queryString += operator + '(' + encodeProperty(property) + ',(' + encodeString(values) + '))&';
+          query.queryString += operator + '(' + encodeProperty(property) + ',(' + values.map(encodeString).join(',') + '))&';
           return query;
         };
       });
