@@ -76,6 +76,12 @@ describe('RqlQuery', function() {
       .toEqual('eq(app.%24ref,http%3A%2F%2Fgraviton%2Ddevelop%2Enova%2Escapp%2Eio%2Fcore%2Fapp%2Fadmin)');
   });
 
+  it('should properly encode elements in an in-query', function() {
+    var q = new RqlQuery();
+    expect(q.in('$property', ['$value-1', '@value-2']).toString())
+        .toEqual('in(%24property,(%24value%2D1,%40value%2D2))');
+  });
+
   it('should properly create two nested and-queries', function() {
     var q = new RqlQuery();
     expect(q.andStart().andStart().eq('id', 4).eq('key', 5).andEnd().andStart().eq('id2', 2).eq('key2', 3).andEnd().andEnd().toString())
